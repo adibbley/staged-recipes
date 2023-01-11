@@ -40,8 +40,11 @@ requirements:
     - {{ compiler("c") }} >=6,<12.2        # [linux]
 
 test:
+  files:
+    - test.cu
   commands:
     - nvcc --version
+    - nvcc test.cu
 
 about:
   home: https://developer.nvidia.com/cuda-toolkit
