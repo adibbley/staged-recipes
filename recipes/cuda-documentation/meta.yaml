@@ -1,0 +1,42 @@
+{% set name = "cuda-documentation" %}
+{% set version = "12.0.76" %}
+{% set platform = "linux-x86_64" %}  # [linux64]
+{% set platform = "linux-ppc64le" %}  # [ppc64le]
+{% set platform = "linux-sbsa" %}  # [aarch64]
+{% set platform = "windows-x86_64" %}  # [win]
+{% set extension = "tar.xz" %}  # [not win]
+{% set extension = "zip" %}  # [win]
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://developer.download.nvidia.com/compute/cuda/redist/cuda_documentation/{{ platform }}/cuda_documentation-{{ platform }}-{{ version }}-archive.tar.xz
+  sha256: 63226377fa39bcd93619d799b688a15d0cb9d0b3ebe8adb3cb2b2537f5839d5a  # [linux64]
+  sha256: 699ca03fcec35d4f7e454b97cac8e59b08085f155708ff522aba1910b61a8698  # [ppc64le]
+  sha256: 771425dbb376e6a9b0caa9a7e31ae598c667b4031d4ca902ea47c9f4ddce05a0  # [aarch64]
+  sha256: a980c971deb1ad8fd76c514d63a5df7e2fcec3ddcf4bd9f07a4430aa6ad2f2de  # [win]
+
+build:
+  number: 0
+  skip: true  # [osx]
+
+test:
+  commands:
+    - test -f $PREFIX/cuda-doc/CUDA_Toolkit_Release_Notes.txt               # [linux]
+    - if not exist %PREFIX%\cuda-doc\CUDA_Toolkit_Release_Notes.txt exit 1  # [win]
+
+about:
+  home: https://developer.nvidia.com/cuda-toolkit
+  license_file: LICENSE
+  license: LicenseRef-NVIDIA-End-User-License-Agreement
+  license_url: https://docs.nvidia.com/cuda/eula/index.html
+  summary: Contains all guides and library documentation for CUDA.
+  description: |
+    Contains all guides and library documentation for CUDA.
+  doc_url: https://docs.nvidia.com/cuda/index.html
+
+extra:
+  recipe-maintainers:
+    - adibbley
