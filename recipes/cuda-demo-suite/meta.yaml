@@ -1,0 +1,56 @@
+{% set name = "cuda-demo-suite" %}
+{% set version = "12.0.76" %}
+{% set platform = "linux-x86_64" %}  # [linux64]
+{% set platform = "windows-x86_64" %}  # [win]
+{% set extension = "tar.xz" %}  # [not win]
+{% set extension = "zip" %}  # [win]
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://developer.download.nvidia.com/compute/cuda/redist/cuda_demo_suite/{{ platform }}/cuda_demo_suite-{{ platform }}-{{ version }}-archive.{{ extension }}
+  sha256: b8c16b37d6e83e1cd6013a9d296a1244c8e88c6dbaa3111dbbe2bb5119ddd439  # [linux64]
+  sha256: 2bc2d30189f41b0f3150d0629089a1b1c695f12b61ac0dc14877a8e93437761a  # [win]
+
+build:
+  number: 0
+  skip: true  # [aarch64]
+  skip: true  # [ppc64le]
+  skip: true  # [osx]
+  script:
+    - mkdir -p $PREFIX/cuda-demo-suite            # [linux]
+    - cp -r demo_suite/* $PREFIX/cuda-demo-suite  # [linux]
+    - move demo_suite %PREFIX%/cuda-demo-suite     # [win]
+  missing_dso_whitelist:
+    - $RPATH/libcurand.so.10
+    - $RPATH/libGL.so.1
+    - $RPATH/libGLU.so.1
+    - $RPATH/libX11.so.6
+    - $RPATH/libglut.so.3
+    - $RPATH/libcufft.so.11
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - {{ compiler("cxx") }}
+
+test:
+  commands:
+    - test -d $PREFIX/cuda-demo-suite     # [linux]
+    - if not exist %PREFIX%\cuda-demo-suite exit 1   # [win]
+
+about:
+  home: https://developer.nvidia.com/cuda-toolkit
+  license_file: LICENSE
+  license: LicenseRef-NVIDIA-End-User-License-Agreement
+  license_url: https://docs.nvidia.com/cuda/eula/index.html
+  summary: Set of pre-built demos using CUDA.
+  description: |
+    Set of pre-built demos using CUDA.
+  doc_url: https://docs.nvidia.com/cuda/index.html
+
+extra:
+  recipe-maintainers:
+    - adibbley
